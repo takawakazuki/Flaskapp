@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ガソリン代 分配管理</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1em;
+      max-width: 600px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.3em;
+    }
+    table {
+      width: 100%;
+      margin-top: 1em;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 0.5em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>ガソリン代 分配管理</h1>
+
+  <form id="rideForm">
+    <label>
+      参加日:
+      <input type="date" id="date" required />
+    </label>
+    <label>
+      集合場所:
+      <input type="text" id="location" placeholder="例：薬勝寺グラウンド" required />
+    </label>
+    <label>
+      乗せた人数（自分以外）:
+      <input type="number" id="passengers" min="0" required />
+    </label>
+    <button type="submit">登録する</button>
+  </form>
+
+  <h2>今月の出席履歴</h2>
+  <table id="recordsTable">
+    <thead>
+      <tr>
+        <th>日付</th>
+        <th>場所</th>
+        <th>乗せた人数</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>統計情報</h2>
+  <p>出席回数: <span id="attendanceCount">0</span> 回</p>
+  <p>合計乗車人数（他人）: <span id="totalPassengers">0</span> 人</p>
+  <p>支払い料金目安: <span id="paymentAmount">¥0</span></p>
+
+  <script>
+    const records = [];
+
+    const form = document.getElementById("rideForm");
+    const tableBody = document.querySelector("#recordsTable tbody");
+    const attendanceCount = document.getElementById("attendanceCount");
+    const totalPassengers = document.getElementById("totalPassengers");
+    const paymentAmount = document.getElementById("paymentAmount");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const date = document.getElementById("date").value;
+      const location = document.getElementById("location").value;
+      const passengers = parseInt(document.getElementById("passengers").value);
+
+      records.push({ date, location, passengers });
+      updateDisplay();
+
+      form.reset();
+    });
+
+    function updateDisplay() {
+      tableBody.innerHTML = "";
+      let total = 0;
+
+      records.forEach((r) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${r.date}</td><td>${r.location}</td><td>${r.passengers}</td>`;
+        tableBody.appendChild(row);
+        total += r.passengers;
+      });
+
+      attendanceCount.textContent = records.length;
+      totalPassengers.textContent = total;
+
+      // 仮に1人あたり300円とした支払い料金
+      const payment = total * 300;
+      paymentAmount.textContent = `¥${payment}`;
+    }
+  </script>
+</body>
+</html>
