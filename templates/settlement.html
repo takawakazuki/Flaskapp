@@ -9,20 +9,27 @@
   <input type="submit" value="表示">
 </form>
 
-<!-- 🔽 精算テーブル -->
-<table border="1">
-  <tr>
-    <th>月</th><th>名前</th><th>乗車料金</th><th>運転支給</th><th>最終精算</th><th>区分</th>
-  </tr>
-  {% for s in settlements %}
-  <tr>
-    <td>{{ s.month }}</td>
-    <td>{{ s.name }}</td>
-    <td>{{ s.ride_total }}円</td>
-    <td>{{ s.drive_reward }}円</td>
-    <td>{{ s.final_amount }}円</td>
-    <td>{{ s.status }}</td>
-  </tr>
-  {% endfor %}
-</table>
+<!-- 🔽 精算テーブル（横スクロール対応） -->
+<div style="overflow-x: auto;">
+  <table border="1" style="min-width: 600px; width: 100%;">
+    <tr>
+      <th>月</th>
+      <th>名前</th>
+      <th>乗車料金</th>
+      <th>運転支給</th>
+      <th>最終精算</th>
+      <th>区分</th>
+    </tr>
+    {% for s in settlements %}
+    <tr>
+      <td>{{ s.month }}</td>
+      <td>{{ s.name }}</td>
+      <td>{{ s.ride_total }}円</td>
+      <td>{{ s.drive_reward }}円</td>
+      <td>{{ s.final_amount }}円</td>
+      <td>{{ s.status }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 {% endblock %}

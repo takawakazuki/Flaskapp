@@ -12,23 +12,25 @@
 <!-- 🔽 乗車履歴テーブル -->
 {% if ride_list %}
 <h3>{{ selected_month }} の乗車履歴</h3>
-<table border="1">
-  <tr>
-    <th>日付</th><th>曜日</th><th>行き</th><th>帰り</th><th>操作</th>
-  </tr>
-  {% for ride in ride_list %}
-  <tr>
-    <td>{{ ride.date }}</td>
-    <td>{{ ride.weekday }}</td>
-    <td>{{ ride.go_location }}（{% if ride.go_driver %}運転{% else %}同乗{% endif %}）</td>
-    <td>{{ ride.back_location }}（{% if ride.back_driver %}運転{% else %}同乗{% endif %}）</td>
-    <td>
-      <a href="/{{ ride.id }}/edit">編集</a> |
-      <a href="/{{ ride.id }}/delete">削除</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+<div style="overflow-x: auto;">
+  <table border="1" style="min-width: 600px; width: 100%;">
+    <tr>
+      <th>日付</th><th>曜日</th><th>行き</th><th>帰り</th><th>操作</th>
+    </tr>
+    {% for ride in ride_list %}
+    <tr>
+      <td>{{ ride.date }}</td>
+      <td>{{ ride.weekday }}</td>
+      <td>{{ ride.go_location }}（{% if ride.go_driver %}運転{% else %}同乗{% endif %}）</td>
+      <td>{{ ride.back_location }}（{% if ride.back_driver %}運転{% else %}同乗{% endif %}）</td>
+      <td>
+        <a href="/{{ ride.id }}/edit">編集</a> |
+        <a href="/{{ ride.id }}/delete">削除</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 {% else %}
 <p>{{ selected_month }} の乗車情報が登録されていません。</p>
 {% endif %}
