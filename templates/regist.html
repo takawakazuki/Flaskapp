@@ -1,22 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>新規登録</h1>
+<h2>乗車情報の新規登録</h2>
 <form method="post">
-        <table border="1">
-            <tr>
-                <th>タイトル</th>
-                <th>メモ</th>
-            </tr>
-                <tr>
-                    <td>
-                        <input type="text" name="title">
-                    </td>
-                    <td>
-                        <input type="text" name="body">
-                    </td>
-                </tr>
-        </table>
-        <input type="submit" value="新規登録">
+  <p>
+    <label>日付:</label>
+    <input type="date" name="date" required>
+  </p>
+
+  <p>
+    <label>行き場所:</label>
+    <select name="go_location_id">
+      {% for loc in locations %}
+        <option value="{{ loc.id }}">{{ loc.name }}</option>
+      {% endfor %}
+    </select>
+    <label>
+      <input type="hidden" name="go_driver" value="0">
+      <input type="checkbox" name="go_driver" value="1"> 運転者
+    </label>
+  </p>
+
+  <p>
+    <label>帰り場所:</label>
+    <select name="back_location_id">
+      {% for loc in locations %}
+        <option value="{{ loc.id }}">{{ loc.name }}</option>
+      {% endfor %}
+    </select>
+    <label>
+      <input type="hidden" name="back_driver" value="0">
+      <input type="checkbox" name="back_driver" value="1"> 運転者
+    </label>
+  </p>
+
+  <p>
+    <input type="submit" value="登録">
+  </p>
 </form>
-<a href="/" role="button">一覧に戻る</a>
+<p><a href="/">メイン画面に戻る</a></p>
 {% endblock %}

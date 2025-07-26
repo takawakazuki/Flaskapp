@@ -1,23 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>削除</h1>
-<p>以下のメモを削除しますか</p>
+<h2>乗車情報の削除</h2>
+<p>以下の情報を削除しますか？</p>
 <form method="post">
-        <table border="1">
-            <tr>
-                <th>タイトル</th>
-                <th>メモ</th>
-            </tr>
-                <tr>
-                    <td>
-                        <input type="text" name="title" value="{{post.title}}"disabled>
-                    </td>
-                    <td>
-                        <input type="text" name="body" value="{{post.body}}"disabled>
-                    </td>
-                </tr>
-        </table>
-        <input type="submit" value="削除">
+  <p>日付: {{ post.date }}</p>
+  <p>行きの乗車: {{ post.go_location }}（{% if post.go_driver %}運転{% else %}同乗{% endif %}）</p>
+  <p>帰りの乗車: {{ post.back_location }}（{% if post.back_driver %}運転{% else %}同乗{% endif %}）</p>
+  <input type="submit" value="削除">
 </form>
-<a href="/" role="button">一覧に戻る</a>
+<p><a href="/">メイン画面に戻る</a></p>
 {% endblock %}

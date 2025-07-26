@@ -1,26 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>メモアプリ</h1>
-    <a href="/regist" role="button">新規登録</a>
-    <a href="/logout" role="button">ログアウト</a>
-    {% if memolist == [] %}
-        <p>メモは登録させていません</p>
-    {% else %}
-        <table border="1">
-            <tr>
-                <th>タイトル</th>
-                <th>メモ</th>
-            </tr>
-            {% for memo in memo_list%}
-                <tr>
-                    <td>{{memo.title}}</td>
-                    <td>{{memo.body}}</td>
-                    <td>
-                        <a href="/{{memo.id}}/edit" role="butto">編集</a>
-                        <a href="/{{memo.id}}/delete" role="butto">削除</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
+<h2>メイン画面</h2>
+
+<!-- 🔽 月選択フォーム -->
+<form method="get" action="/">
+  <label for="month">表示する月を選択：</label>
+  <input type="month" id="month" name="month" value="{{ selected_month }}">
+  <input type="submit" value="表示">
+</form>
+
+<!-- 🔽 乗車履歴テーブル -->
+{% if ride_list %}
+<h3>{{ selected_month }} の乗車履歴</h3>
+<table border="1">
+  <tr>
+    <th>日付</th><th>曜日</th><th>行き</th><th>帰り</th><th>操作</th>
+  </tr>
+  {% for ride in ride_list %}
+  <tr>
+    <td>{{ ride.date }}</td>
+    <td>{{ ride.weekday }}</td>
+    <td>{{ ride.go_location }}（{% if ride.go_driver %}運転{% else %}同乗{% endif %}）</td>
+    <td>{{ ride.back_location }}（{% if ride.back_driver %}運転{% else %}同乗{% endif %}）</td>
+    <td>
+      <a href="/{{ ride.id }}/edit">編集</a> |
+      <a href="/{{ ride.id }}/delete">削除</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>{{ selected_month }} の乗車情報が登録されていません。</p>
+{% endif %}
+
+<!-- 🔽 新規登録ボタン（未登録日のみ） -->
+{% set date_str = selected_month + '-01' %}
+{% if date_str not in already_registered_dates %}
+  <div style="margin-top: 1em;">
+    <a href="/regist?date={{ date_str }}" class="btn">＋ 新規登録</a>
+  </div>
+{% endif %}
+
+<!-- 🔽 精算確認ボタン（常に一番下） -->
+<div style="margin-top: 2em;">
+  <a href="/settlement" class="btn">💰 精算確認</a>
+</div>
+
 {% endblock %}

@@ -1,22 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>編集</h1>
+<h2>乗車情報の編集</h2>
 <form method="post">
-        <table border="1">
-            <tr>
-                <th>タイトル</th>
-                <th>メモ</th>
-            </tr>
-                <tr>
-                    <td>
-                        <input type="text" name="title" value="{{post.title}}">
-                    </td>
-                    <td>
-                        <input type="text" name="body" value="{{post.body}}">
-                    </td>
-                </tr>
-        </table>
-        <input type="submit" value="編集">
+  日付: <input type="date" name="date" value="{{ post.date }}"><br>
+
+  行き場所:
+  <select name="go_location_id">
+    {% for loc in locations %}
+      <option value="{{ loc.id }}" {% if loc.id == post.go_location_id %}selected{% endif %}>{{ loc.name }}</option>
+    {% endfor %}
+  </select>
+  運転者: <input type="checkbox" name="go_driver" value="1" {% if post.go_driver %}checked{% endif %}><br>
+
+  帰り場所:
+  <select name="back_location_id">
+    {% for loc in locations %}
+      <option value="{{ loc.id }}" {% if loc.id == post.back_location_id %}selected{% endif %}>{{ loc.name }}</option>
+    {% endfor %}
+  </select>
+  運転者: <input type="checkbox" name="back_driver" value="1" {% if post.back_driver %}checked{% endif %}><br>
+
+  <input type="submit" value="更新">
 </form>
-<a href="/" role="button">一覧に戻る</a>
+<p><a href="/">メイン画面に戻る</a></p>
 {% endblock %}
