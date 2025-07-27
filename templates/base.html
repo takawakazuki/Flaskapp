@@ -2,17 +2,21 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">  <!-- ←★ここが重要 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">  <!-- モバイル対応 -->
     <title>ガソリン代精算アプリ</title>
     <style>
-        /* モバイル端末でも見やすいスタイルの例 */
         body {
             font-family: sans-serif;
             margin: 1em;
         }
 
+        .table-container {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
+            min-width: 700px; /* 表の崩れを防ぐ */
             border-collapse: collapse;
         }
 
@@ -20,37 +24,11 @@
             padding: 0.5em;
             border: 1px solid #ccc;
             font-size: 0.95em;
+            white-space: nowrap; /* 折り返し防止で列が崩れにくくなる */
         }
 
         input, select, button, .btn {
             font-size: 1em;
-        }
-
-        @media (max-width: 600px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
-                width: 100%;
-            }
-
-            tr {
-                margin-bottom: 1em;
-            }
-
-            td {
-                border: none;
-                border-bottom: 1px solid #ddd;
-                position: relative;
-                padding-left: 50%;
-            }
-
-            td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 45%;
-                padding-left: 0.5em;
-                font-weight: bold;
-            }
         }
     </style>
 </head>

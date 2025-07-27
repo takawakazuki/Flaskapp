@@ -13,29 +13,25 @@
 {% if ride_list %}
 <h3>{{ selected_month }} の乗車履歴</h3>
 
-<div style="overflow-x: auto;">
-  <table style="min-width: 700px; border-collapse: collapse; width: 100%;">
+<div class="table-container">
+  <table class="responsive-table">
     <thead>
       <tr>
-        <th style="border: 1px solid #ccc; padding: 8px;">日付</th>
-        <th style="border: 1px solid #ccc; padding: 8px;">曜日</th>
-        <th style="border: 1px solid #ccc; padding: 8px;">行き</th>
-        <th style="border: 1px solid #ccc; padding: 8px;">帰り</th>
-        <th style="border: 1px solid #ccc; padding: 8px;">操作</th>
+        <th>日付</th>
+        <th>曜日</th>
+        <th>行き</th>
+        <th>帰り</th>
+        <th>操作</th>
       </tr>
     </thead>
     <tbody>
       {% for ride in ride_list %}
       <tr>
-        <td style="border: 1px solid #ccc; padding: 8px;">{{ ride.date }}</td>
-        <td style="border: 1px solid #ccc; padding: 8px;">{{ ride.weekday }}</td>
-        <td style="border: 1px solid #ccc; padding: 8px;">
-          {{ ride.go_location }}（{% if ride.go_driver %}運転{% else %}同乗{% endif %}）
-        </td>
-        <td style="border: 1px solid #ccc; padding: 8px;">
-          {{ ride.back_location }}（{% if ride.back_driver %}運転{% else %}同乗{% endif %}）
-        </td>
-        <td style="border: 1px solid #ccc; padding: 8px;">
+        <td>{{ ride.date }}</td>
+        <td>{{ ride.weekday }}</td>
+        <td>{{ ride.go_location }}（{% if ride.go_driver %}運転{% else %}同乗{% endif %}）</td>
+        <td>{{ ride.back_location }}（{% if ride.back_driver %}運転{% else %}同乗{% endif %}）</td>
+        <td>
           <a href="/{{ ride.id }}/edit">編集</a> |
           <a href="/{{ ride.id }}/delete">削除</a>
         </td>
@@ -44,6 +40,7 @@
     </tbody>
   </table>
 </div>
+
 {% else %}
 <p>{{ selected_month }} の乗車情報が登録されていません。</p>
 {% endif %}
