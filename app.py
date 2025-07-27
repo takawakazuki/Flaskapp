@@ -252,7 +252,7 @@ def settlement():
     if not month_str:
         month_str = datetime.now().strftime("%Y-%m")
 
-    # ride_recordsとlocationsをJOINし、選択月のデータを取得
+    # 🔽 ログインユーザーのデータのみ取得
     records = db.execute("""
         SELECT 
             r.user_id,
@@ -265,7 +265,8 @@ def settlement():
         LEFT JOIN locations g ON r.go_location_id = g.id
         LEFT JOIN locations b ON r.back_location_id = b.id
         WHERE strftime('%Y-%m', r.date) = ?
-    """, [month_str]).fetchall()
+        AND r.user_id = ?
+    """, [month_str, current_user.id]).fetchall()
 
     monthly_data = {}
 
@@ -284,7 +285,7 @@ def settlement():
         else:
             monthly_data[key]["drive_total"] += row["back_price"] or 0
 
-    # 月単位で合計
+    # 全体集計（自分だけだが処理共通化のため残す）
     ride_sum = sum(d["ride_total"] for d in monthly_data.values())
     drive_sum = sum(d["drive_total"] for d in monthly_data.values())
 

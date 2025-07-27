@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>精算結果（月別）</h2>
+<h2>精算結果（{{ selected_month }} - {{ current_user.userid }}）</h2>
+
 
 <!-- 🔽 月選択フォーム -->
 <form method="get" action="/settlement" style="margin-bottom: 1em;">
