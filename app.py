@@ -306,7 +306,70 @@ def settlement():
 
     return render_template("settlement.html", settlements=result, selected_month=month_str)
 
+# ========== 全体精算画面 ==========
+@app.route("/settlement_all")
+@login_required
+def settlement_all():
+    db = get_db()
 
+    # クエリパラメータで月を取得（デフォルトは今月）
+    month_str = request.args.get("month")
+    if not month_str:
+        month_str = datetime.now().strftime("%Y-%m")
+
+    # 指定月のレコードを取得
+    records = db.execute("""
+        SELECT 
+            r.user_id,
+            strftime('%Y-%m', r.date) AS month,
+            r.go_driver, r.back_driver,
+            g.price AS go_price, b.price AS back_price,
+            u.name
+        FROM ride_records r
+        JOIN user u ON u.id = r.user_id
+        LEFT JOIN locations g ON r.go_location_id = g.id
+        LEFT JOIN locations b ON r.back_location_id = b.id
+        WHERE strftime('%Y-%m', r.date) = ?
+    """, [month_str]).fetchall()
+
+    # ユーザー単位で集計
+    monthly_data = {}
+    for row in records:
+        key = (row["month"], row["user_id"], row["name"])
+        if key not in monthly_data:
+            monthly_data[key] = {"ride_total": 0, "drive_total": 0}
+
+        if not row["go_driver"]:
+            monthly_data[key]["ride_total"] += row["go_price"] or 0
+        else:
+            monthly_data[key]["drive_total"] += row["go_price"] or 0
+
+        if not row["back_driver"]:
+            monthly_data[key]["ride_total"] += row["back_price"] or 0
+        else:
+            monthly_data[key]["drive_total"] += row["back_price"] or 0
+
+    # 月合計
+    ride_sum = sum(d["ride_total"] for d in monthly_data.values())
+    drive_sum = sum(d["drive_total"] for d in monthly_data.values())
+
+    result = []
+    for (month, _, name), data in monthly_data.items():
+        ride = data["ride_total"]
+        drive = data["drive_total"]
+        reward = (ride_sum * drive / drive_sum) if drive_sum > 0 else 0
+        final = round(reward - ride)
+
+        result.append({
+            "month": month,
+            "name": name,
+            "ride_total": ride,
+            "drive_reward": round(reward),
+            "final_amount": final,
+            "status": "受取" if final > 0 else "支払"
+        })
+
+    return render_template("settlement_all.html", settlements=result, selected_month=month_str)
 
 # ========== アプリ起動 ==========
 if __name__ == "__main__":
