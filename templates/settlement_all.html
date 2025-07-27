@@ -11,13 +11,20 @@
 
 <!-- 🔽 精算結果テーブル -->
 <div style="overflow-x: auto;">
-  <table border="1" style="min-width: 600px; width: 100%;">
+  <table border="1" style="min-width: 700px; width: 100%;">
     <tr>
-      <th>月</th><th>名前</th><th>乗車料金</th><th>運転支給</th><th>最終精算</th><th>区分</th>
+      <th>月</th>
+      <th>ユーザーID</th>  <!-- 追加 -->
+      <th>名前</th>
+      <th>乗車料金</th>
+      <th>運転支給</th>
+      <th>最終精算</th>
+      <th>区分</th>
     </tr>
     {% for s in settlements %}
     <tr>
       <td>{{ s.month }}</td>
+      <td>{{ s.userid }}</td>  <!-- 追加 -->
       <td>{{ s.name }}</td>
       <td>{{ s.ride_total }}円</td>
       <td>{{ s.drive_reward }}円</td>

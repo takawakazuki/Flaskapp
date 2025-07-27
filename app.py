@@ -247,19 +247,19 @@ def delete(id):
 def settlement():
     db = get_db()
 
-    # 🔽 クエリパラメータから年月を取得（例: 2025-07）
     month_str = request.args.get("month")
     if not month_str:
         month_str = datetime.now().strftime("%Y-%m")
 
-    # 🔽 ログインユーザーのデータのみ取得
+    # 🔽 ログインユーザーのデータのみ取得（useridを追加）
     records = db.execute("""
         SELECT 
             r.user_id,
             strftime('%Y-%m', r.date) AS month,
             r.go_driver, r.back_driver,
             g.price AS go_price, b.price AS back_price,
-            u.name
+            u.name,
+            u.userid
         FROM ride_records r
         JOIN user u ON u.id = r.user_id
         LEFT JOIN locations g ON r.go_location_id = g.id
@@ -271,7 +271,7 @@ def settlement():
     monthly_data = {}
 
     for row in records:
-        key = (row["month"], row["user_id"], row["name"])
+        key = (row["month"], row["user_id"], row["name"], row["userid"])
         if key not in monthly_data:
             monthly_data[key] = {"ride_total": 0, "drive_total": 0}
 
@@ -285,12 +285,11 @@ def settlement():
         else:
             monthly_data[key]["drive_total"] += row["back_price"] or 0
 
-    # 全体集計（自分だけだが処理共通化のため残す）
     ride_sum = sum(d["ride_total"] for d in monthly_data.values())
     drive_sum = sum(d["drive_total"] for d in monthly_data.values())
 
     result = []
-    for (month, _, name), data in monthly_data.items():
+    for (month, _, name, userid), data in monthly_data.items():
         ride = data["ride_total"]
         drive = data["drive_total"]
         reward = (ride_sum * drive / drive_sum) if drive_sum > 0 else 0
@@ -298,6 +297,7 @@ def settlement():
 
         result.append({
             "month": month,
+            "userid": userid,
             "name": name,
             "ride_total": ride,
             "drive_reward": round(reward),
@@ -318,14 +318,15 @@ def settlement_all():
     if not month_str:
         month_str = datetime.now().strftime("%Y-%m")
 
-    # 指定月のレコードを取得
+    # 指定月のレコードを取得（useridを含める）
     records = db.execute("""
         SELECT 
             r.user_id,
             strftime('%Y-%m', r.date) AS month,
             r.go_driver, r.back_driver,
             g.price AS go_price, b.price AS back_price,
-            u.name
+            u.name,
+            u.userid
         FROM ride_records r
         JOIN user u ON u.id = r.user_id
         LEFT JOIN locations g ON r.go_location_id = g.id
@@ -336,7 +337,7 @@ def settlement_all():
     # ユーザー単位で集計
     monthly_data = {}
     for row in records:
-        key = (row["month"], row["user_id"], row["name"])
+        key = (row["month"], row["user_id"], row["name"], row["userid"])
         if key not in monthly_data:
             monthly_data[key] = {"ride_total": 0, "drive_total": 0}
 
@@ -355,7 +356,7 @@ def settlement_all():
     drive_sum = sum(d["drive_total"] for d in monthly_data.values())
 
     result = []
-    for (month, _, name), data in monthly_data.items():
+    for (month, _, name, userid), data in monthly_data.items():
         ride = data["ride_total"]
         drive = data["drive_total"]
         reward = (ride_sum * drive / drive_sum) if drive_sum > 0 else 0
@@ -364,6 +365,7 @@ def settlement_all():
         result.append({
             "month": month,
             "name": name,
+            "userid": userid,
             "ride_total": ride,
             "drive_reward": round(reward),
             "final_amount": final,
